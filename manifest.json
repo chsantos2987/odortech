@@ -1,0 +1,17 @@
+{
+  "name": "Ecolab Odortech — Rota de Inspeção",
+  "short_name": "Odortech",
+  "description": "Sistema de inspeção de kits Odortech — Klabin Monte Alegre",
+  "start_url": "/odortech/",
+  "display": "standalone",
+  "background_color": "#0077C8",
+  "theme_color": "#0077C8",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://www.ecolab.com/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
