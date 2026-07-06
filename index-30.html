@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Ecolab Odortech — Rota de Inspeção</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+body{-webkit-tap-highlight-color:transparent;font-family:Arial,sans-serif;}
+.dark body{background:#0f172a;color:#f1f5f9;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="qr-tmp" style="position:absolute;left:-9999px;top:-9999px;width:80px;height:80px;"></div>
+<script>const LOGO_SRC="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA0JCgsKCA0LCgsODg0PEyAVExISEyccHhcgLikxMC4pLSwzOko+MzZGNywtQFdBRkxOUlNSMj5aYVpQYEpRUk//2wBDAQ4ODhMREyYVFSZPNS01T09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0//wAARCACMASwDASIAAhEBAxEB/8QAGwABAAIDAQEAAAAAAAAAAAAAAAUGAwQHAgH/xABCEAACAgECAgYGBAwFBQAAAAAAAQIDBAURBhIWITFRVJITIkFhcdEUMnKxFSMzNEJSYnOBkZPBNVOh4fAkRFWCg//EABkBAQEBAQEBAAAAAAAAAAAAAAADAgQFAf/EACMRAAICAQMFAQEBAAAAAAAAAAABAgMRBCExEhMUQVEycSL/2gAMAwEAAhEDEQA/AI4AHunggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHuuHpLYQ325pKO/xZZ+hWR42ryP5k52wh+mUhVKe8UVUFq6FZHjavIx0KyPG1eR/Mx5Nf0341nwqoLV0KyPG1f038zBm8J3YeHbkSy65KuLk0oNbjya84yPHsXorgBI4Wi6jnJSoxpcj/Tl6q/1KylGKy2SUZN4SI4Flq4NzpLezIoh7uuRl6FZHjavIyXk1fSvj2fCqgsedwndh4VuTLLrkq483KoPrK6bhZGfDMTrlD9I+AlcDh/Uc5KcKfR1v9O18u/8O0mqeCm1+Pzdn3Qh8zMr647NmoUWS3SKgC6Pgmjbqzbd/sI0sng6+tb4+XVY/ZGacWzK1Nb9mnprF6KwDazdPy8CajlUTr37JdqfwZrRW8ku97FlJNZRFxaeGfAWmHBl84qSza1v1/UfzPvQrI8bV5H8yXk1/SvjWfCqg2M7GeHm3Y0pKTqlytpbbmuWTTWURaaeGAD6fT4fAWXG4Pyb8euyeVCuU4puDg20ZuhV/jq/6b+ZDya/pdaex+iqAtXQq/x1f9N/MidZ0W7SJV+ksjZCxPaUVst+4+xvrk8JnyVE4rLRFgEnoukT1e2yFd0anWk22t9ykpKKyycYuTwiMBauhWR42ryP5joVkeNq8jJeTX9K+NZ8KqC1dCsjxtXkfzMdvBmZGO9eVTN9zTiPJr+jx7PhWQbufpebpzX0qhxi3sprri/4jG0+d8YylNQ5ouSW27cV7fgU7kcZyT6JZxg0gbOXiSxn9eM1zcr27U+3Zo1jUWpboy008My4v51T+8j96OsxOTYv53T+8j96OsxODWco79Fwz6QtvE+l02zqstsUoScX+LfaTRjdFLe7qg39lHGsezsln0Q3SzSf86z+mzT1XiTTMrTciiq2bnODSTra6yxuinb8lDyoqXGtcI34SUVFPffZbdxWtQcuCNjmlyZ+GNAqVMM3Mgp2T664S7Irv+JauVJbJdR4oSVUFHbblW38jIydk3KWWUrgox2MV+RTj1uy+yNcF7ZPZEXZxTpEG0smUtv1YNlb4ysvlqyrscvRRgnWvZ72V866tLGUeps5bdU4yxFF11biTTcvS8iim2x2Tg1FOtrrPHD+g14+PDOy6nZdJc0Ybb8i79vaypYig8ylWfUdkd/hudXilypLsM3LtLpj7PtL7z6peiOjnyU2oxV6XbGv1bI/GD/sZsfUsTIm4V3R9Iu2uXqyX8H1nvLw8fLglfVGTXY+xr4PtRTuJ6J4k6qa8mV++8lGcVKytL9rt2IQgpvBec3BZLZqGpU4EE7G5WS6oVR65TfuRoU5F9+U4RcZ5jXrbddeNHu98v8AnYUOu++N0bIWz9L2KXN1l40HMw8PGrxbq54lz65emWysl3qXYyllHbX0lXd3HjgmXiV2YzovirYtbS5+vcouv6L+C8uE6W3j2y9Xfr5X3HQU01uiF4rUHo8nNdashy/HcnVNxZW2tSW5L0/kofZX3GRnin8lD7KPb7Cb5Krg5lr/APjuZ+9ZHEjr/wDjuZ+8ZHHs1fhHi2ftgmeGNO+n6nGU4700+vP39yIddp0bhzTfwfpkIzW1tnrz+RLU29EML2V01XXPL4JjZGDKyqcSMJXy5VOagvi+wzPsKRxlqDtza8SuXVT60tv1medCHW8Hp2T6Fku5G65p61HTLKdlzpc0H3SR90TPWfpdVzfr7cs/iu0kX2Gd4v8Agwpx/pyKUXGTjJNNPZp+wtHAv53lfYX3mtxdp30TUPpMFtVkdfwl7TZ4F/O8r7C+89G2fXTk86qHRdguxGa/qU9KwFkV1xm+dR2k9l1kmY7/AEPJ+P5OXf8AT22/1POWE9z05Za2Ktp3Ft+Vm1Y88OO1klHeEm2veWzZP2GvVLEUvxPoeb9nbc2H2GpuLeywYgmlu8mvn01XYdtd8U65RfNuczrzLKo+jW04x3UXu00t+zdewuXElOs3Y8o40q3Q160a91Nr/ncURpp7PtOvSwTTyzj1U3lYM2RlTyOqSjFb8zSXa+997MAB3JJbI4m23lmXF/Oqf3kfvR1mJySmarurm1uoyT/ky5dNMbwd3mRx6quUmulHZpLIwT6mWogbuHFbdOz8J5sedt8qn1I0+muN4O7zIdNcbwd3mRzKm1cI6ZXVS5Zs9GF/5XO85patw1VTg3ZE87KulVBuKsaZk6a43g7vMjW1HivHzMG7Hji2xdkHFNyWyNxhflbE5Spxszf4Y1urLxa8S+ajk1rlW7+uvZt7yxI5HFuLTTaa7GvYTWFxPqWLFQnON8F7LF1/zN26RveJirVLGJF4ztPxdQq5MuqM0ux9jXwZC2cG4Epbwvvgu7dP+xrVcax5UrcF7/sWfNGXprjeDu8yJRrvhsisrKJ8mvqXCuNhafdkwybpSrjzJNIkeG9crzseGNdNRyoLbZv6670RmpcV4+bp9+NHFti7I7JtrqKqm4tOLaae6a7UWjTOyOLOSEroVzXb4Op5d84xVdEOe6f1U+yPvfuIavTZZM7IVWScbH/1OU/rW/sx7okDhcUZ1EPRZCjk17bev1S2+KJrG4xwVBRsxrqturaOzSIuiyHCLq+ua3ZN16bhQxljrGq9Htts4pmu9Hqqi44lkq4PtpmvSVv/ANX2fwNJ8YaYl1RyH/8AP/c08njStRaxcOTfsdktl/JGVVa/Rp21L2TePjyxt+v0EI9b5Z717fB/VKrxJrUdQya8bGlvj1S3cv138iO1LWs7UurIt2r/AMuHVH/f+JoRe0k37GdVema/1Lk5rNSntHg6xT+Sh9lfce2VWHGWNGEY/RLupJfWR66a43g7vMjldFnw6lqK8cmxm8KY2ZmW5M8m6MrJczSS2Rg6F4fi7/5I+dNcbwd3mR5lxpjuLUcO7fbq3kiiWoWyJN6d7mHE4fxYa9Cmmyy2GOlZa5pbJ/ox/uXGPYUjS+JsfCon6TGtsutm52zUl1t/2N7prjeDu8yPllV0nujVdlMFsy1GN11N7uEG33pFH1viVajhrHxqrKd5bybl2ru6iA9Nb/m2eZmoaWTWXsZnq4p4SydZioxW0VFL3Ho5Rj5l+PfXdG2e8JKS3ky2LjTH268O7zIzPSzjxuahqoS52JrXNPWo6bZRsufbmg+6SK3wRFwzsuMltJRSa7nubT40xn/2d3mRH4vEGHi6rk5leLby3xW8N11SXaz7Gu1QcWjM7K3NSTL2RHEuBdqWmrHx+Tn51L1nstkRnTXG8Hd5kOmuN4O7zInGm1POCsrqpLGSNx+EtSV0ZO2mpJp88ZNtF6itopN77LtftKv01xvB3eZHmfGtO34vCsb/AGppG5wunyjELKa+GWqXUcx1udVmsZUqNuRze23Z7zd1HijPzYOqHLj1vqah2tfEgzp01EoPqkc2pvjPaIAB1nIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/2Q==";</script>
+<script type="text/babel" data-presets="react">
+
+function proximaInspecao(){
+  const d=new Date();
+  d.setDate(d.getDate()+7);
+  while(d.getDay()===0||d.getDay()===6){d.setDate(d.getDate()+1);}
+  return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
+}
+const {useState,useRef,useEffect}=React;
+const BLUE_HEX="#0077C8";
+const BLUE=[0,119,200];
+const DARK_BLUE=[0,60,120];
+const GREEN=[22,163,74];
+const RED=[220,38,38];
+const GREY=[120,120,120];
+const AMBER=[217,119,6];
+
+const KITS=[
+  {id:1,nome:"Kit 1 — MVR"},
+  {id:2,nome:"Kit 2 — Área de Fibras"},
+  {id:3,nome:"Kit 3 — Kamyr"},
+  {id:4,nome:"Kit 4 — ESCO"},
+  {id:5,nome:"Kit 5 — M11 Forno de Cal"},
+  {id:6,nome:"Kit 6 — P1 Caldeira"},
+  {id:7,nome:"Kit 7 — M8 Caldeira"},
+];
+
+const CHECKLIST_FISICO=[
+  // Estrutura
+  {id:"fixacoes",     label:"Estrutura — Fixações apertadas"},
+  {id:"limpeza_skid", label:"Estrutura — Limpeza dos Skids"},
+  // Bomba Dosadora
+  {id:"bomba_vaz",    label:"Bomba Dosadora — Sem vazamentos"},
+  {id:"bomba_func",   label:"Bomba Dosadora — Funcionamento normal"},
+  // Tubulações
+  {id:"mangueiras",   label:"Tubulações — Mangueiras em bom estado"},
+  {id:"conexoes",     label:"Tubulações — Conexões estanques"},
+  // Válvulas
+  {id:"valv_func",    label:"Válvulas — Funcionamento correto"},
+  {id:"valv_vaz",     label:"Válvulas — Sem vazamentos"},
+  // Instrumentação
+  {id:"manometro",    label:"Instrumentação — Manômetro funcionando"},
+  // Painel Elétrico
+  {id:"painel_limp",  label:"Painel Elétrico — Painel limpo"},
+  {id:"painel_ind",   label:"Painel Elétrico — Indicações luminosas"},
+  {id:"painel_bot",   label:"Painel Elétrico — Botoeiras funcionais"},
+  {id:"painel_emg",   label:"Painel Elétrico — Botão de emergência funcional"},
+  // Segurança
+  {id:"etiquetas",    label:"Segurança — Etiquetas legíveis"},
+  {id:"fds",          label:"Segurança — FDS presente"},
+  // Limpeza
+  {id:"equip_limpo",  label:"Limpeza — Equipamento limpo"},
+  {id:"sem_residuos", label:"Limpeza — Sem resíduos químicos"},
+  // Estocagem
+  {id:"estoc_conex",  label:"Estocagem — Conexões Tq. estocagem OK"},
+  {id:"estoc_nivel",  label:"Estocagem — Nível > 400 (p/ Tq. 1600) > 80 (p/ Tq. 1600)"},
+  {id:"estoc_ibc",    label:"Estocagem — Bacia de contenção IBC OK"},
+  {id:"estoc_cont",   label:"Estocagem — Contenção sem material retido"},
+  {id:"estoc_dreno",  label:"Estocagem — Dreno da contenção fechado"},
+  {id:"estoc_bomba",  label:"Estocagem — Bomba de transferência OK"},
+];
+const CHECKLIST_FUNCIONAL=[
+  {id:"liga",         label:"Teste Operacional — Liga normalmente"},
+  {id:"pressao",      label:"Teste Operacional — Pressão dentro do especificado",hasValue:true,unit:"bar"},
+  {id:"vaz_linhas",   label:"Teste Operacional — Vazamentos em linhas de aplicação"},
+  {id:"vaz_bicos",    label:"Teste Operacional — Vazamentos em bicos"},
+  {id:"bicos_entup",  label:"Teste Operacional — Bicos entupidos (<20%)"},
+  {id:"op_estavel",   label:"Teste Operacional — Operação estável"},
+];
+const ALL_ITEMS=[...CHECKLIST_FISICO,...CHECKLIST_FUNCIONAL];
+const STATUS={NONE:"none",OK:"ok",NOK:"nok"};
+
+function freshKitData(){
+  const d={
+    kitFoto:null,manometroFoto:null,
+    nivelTanque:"",produto:"",concentracao:"",
+    odorPerceptivel:null,
+    operadorNome:"",operadorPRN:"",operadorValidou:false,
+    historico:"",pendenciasAnteriores:"",
+    observacoesGerais:"",
+    totalInspecoes:0,
+  };
+  ALL_ITEMS.forEach(it=>{d[it.id]={status:STATUS.NONE,note:"",acao:"",value:"",photo:"",criticidade:""};});
+  return d;
+}
+function freshAll(){const o={};KITS.forEach(k=>{o[k.id]=freshKitData();});return o;}
+
+// localStorage persistence
+const LS_KEY="odortech_rota_v4";
+function saveLocal(state){try{localStorage.setItem(LS_KEY,JSON.stringify(state));}catch(e){}}
+function loadLocal(){try{const s=localStorage.getItem(LS_KEY);return s?JSON.parse(s):null;}catch(e){return null;}}
+function clearLocal(){try{localStorage.removeItem(LS_KEY);}catch(e){}}
+
+// Previous inspection storage
+const LS_PREV="odortech_prev_v4";
+function savePrev(data){try{localStorage.setItem(LS_PREV,JSON.stringify({data,date:new Date().toLocaleDateString("pt-BR")}));}catch(e){}}
+function loadPrev(){try{const s=localStorage.getItem(LS_PREV);return s?JSON.parse(s):null;}catch(e){return null;}}
+
+
+function todayStr(){return new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});}
+function nowStr(){return new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});}
+function fmtTimer(s){const m=Math.floor(s/60);const sc=s%60;return `${String(m).padStart(2,"0")}:${String(sc).padStart(2,"0")}`;}
+
+async function getQRDataURL(){
+  return new Promise(resolve=>{
+    const el=document.getElementById("qr-tmp");
+    el.innerHTML="";
+    try{
+      new QRCode(el,{text:"https://www.ecolab.com",width:80,height:80,colorDark:"#0077C8",colorLight:"#ffffff"});
+      setTimeout(()=>{
+        const img=el.querySelector("img")||el.querySelector("canvas");
+        if(img&&img.tagName==="CANVAS"){resolve(img.toDataURL());}
+        else if(img){resolve(img.src);}
+        else{resolve(null);}
+      },300);
+    }catch(e){resolve(null);}
+  });
+}
+
+async function gerarPDF(responsavel,allData,grupoWhatsApp,proximaVisita,tempoRota,darkMode,fotoCapa,prevData){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
+  const W=210,M=15,CW=W-M*2;
+
+  const logoImg=new Image();
+  logoImg.src=LOGO_SRC;
+  await new Promise(r=>{logoImg.onload=r;logoImg.onerror=r;});
+  const qrDataURL=await getQRDataURL();
+
+  // ---- CAPA ----
+  doc.setFillColor(...BLUE);doc.rect(0,0,W,85,"F");
+  try{doc.addImage(logoImg,"JPEG",M,10,50,28);}catch(e){}
+  if(fotoCapa){try{doc.addImage(fotoCapa,"JPEG",W-M-55,8,55,35);}catch(e){}}
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(22);doc.setFont("helvetica","bold");
+  doc.text("Relatório de Inspeção",W/2,55,{align:"center"});
+  doc.setFontSize(13);doc.setFont("helvetica","normal");
+  doc.text("Sistema Odortech — Controle de Odor",W/2,64,{align:"center"});
+  doc.setFontSize(10);
+  doc.text("Klabin — Unidade Monte Alegre",W/2,73,{align:"center"});
+  if(grupoWhatsApp){doc.setFontSize(8);doc.text(`Relatório enviado para: ${grupoWhatsApp}`,W/2,80,{align:"center"});}
+
+  let y=95;
+  doc.setFillColor(245,250,255);doc.roundedRect(M,y,CW,45,3,3,"F");
+  doc.setDrawColor(...BLUE);doc.setLineWidth(0.5);doc.roundedRect(M,y,CW,45,3,3,"S");
+  doc.setTextColor(...DARK_BLUE);doc.setFontSize(10);doc.setFont("helvetica","bold");
+  doc.text("Informações da Inspeção",M+5,y+8);
+  doc.setFont("helvetica","normal");doc.setFontSize(9);doc.setTextColor(50,50,50);
+  doc.text(`Responsável: ${responsavel}`,M+5,y+16);
+  doc.text(`Data: ${todayStr()}  •  Horário: ${nowStr()}`,M+5,y+23);
+  if(tempoRota>0)doc.text(`Tempo total da rota: ${fmtTimer(tempoRota)}`,M+5,y+30);
+  doc.text(`Próxima inspeção: ${proximaVisita}  (frequência: semanal — seg. a sex.)`,M+5,y+37);
+  doc.text(`Total de kits inspecionados: ${KITS.length}`,M+CW/2,y+16);
+  let totalOK=0,totalNOK=0,totalPend=0;
+  KITS.forEach(k=>{ALL_ITEMS.forEach(it=>{const s=allData[k.id][it.id].status;if(s===STATUS.OK)totalOK++;else if(s===STATUS.NOK)totalNOK++;else totalPend++;});});
+  doc.text(`Itens OK: ${totalOK}`,M+CW/2,y+23);
+  doc.text(`Não conformidades: ${totalNOK}`,M+CW/2,y+30);
+  doc.text(`Itens pendentes: ${totalPend}`,M+CW/2,y+37);
+  y+=52;
+
+  doc.setFillColor(...(totalNOK>0?RED:GREEN));
+  doc.roundedRect(M,y,CW,12,3,3,"F");
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont("helvetica","bold");
+  doc.text(totalNOK>0?`⚠  ${totalNOK} não conformidade(s) identificada(s) na rota`:"✓  Todos os kits operando conforme",W/2,y+8,{align:"center"});
+  y+=18;
+
+  doc.setFontSize(10);doc.setFont("helvetica","bold");doc.setTextColor(...DARK_BLUE);
+  doc.text("Resumo da Rota",M,y);y+=6;
+  KITS.forEach((kit,i)=>{
+    const kd=allData[kit.id];
+    const ok=ALL_ITEMS.filter(it=>kd[it.id].status===STATUS.OK).length;
+    const nok=ALL_ITEMS.filter(it=>kd[it.id].status===STATUS.NOK).length;
+    const pend=ALL_ITEMS.filter(it=>kd[it.id].status===STATUS.NONE).length;
+    doc.setFillColor(...(i%2===0?[245,245,245]:[255,255,255]));
+    doc.rect(M,y,CW,8,"F");
+    doc.setFont("helvetica","normal");doc.setFontSize(8.5);doc.setTextColor(30,30,30);
+    doc.text(kit.nome,M+3,y+5.5);
+    doc.setTextColor(...GREEN);doc.setFont("helvetica","bold");doc.text(`${ok} OK`,M+CW*0.55,y+5.5);
+    doc.setTextColor(...RED);doc.text(`${nok} NOK`,M+CW*0.7,y+5.5);
+    doc.setTextColor(...GREY);doc.setFont("helvetica","normal");doc.text(`${pend} pend.`,M+CW*0.85,y+5.5);
+    y+=8;
+  });
+
+  // Footer capa
+  doc.setFillColor(...BLUE);doc.rect(0,287,W,10,"F");
+  doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont("helvetica","normal");
+  doc.text("Ecolab • Tecnologia Odortech — Relatório técnico de campo",W/2,293,{align:"center"});
+  if(qrDataURL){try{doc.addImage(qrDataURL,"PNG",W-M-15,274,15,15);}catch(e){}}
+
+  // ---- PÁGINAS POR KIT ----
+  for(let ki=0;ki<KITS.length;ki++){
+    const kit=KITS[ki];
+    const kd=allData[kit.id];
+    doc.addPage();let y=0;
+
+    doc.setFillColor(...BLUE);doc.rect(0,0,W,32,"F");
+    try{doc.addImage(logoImg,"JPEG",M,5,38,20);}catch(e){}
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(13);doc.setFont("helvetica","bold");
+    doc.text("Relatório de Inspeção — Odortech",W/2,13,{align:"center"});
+    doc.setFontSize(9);doc.setFont("helvetica","normal");
+    doc.text("Klabin — Unidade Monte Alegre",W/2,20,{align:"center"});
+    doc.text(`${todayStr()} • ${nowStr()}`,W/2,27,{align:"center"});
+    y=38;
+
+    doc.setFillColor(...DARK_BLUE);doc.roundedRect(M,y,CW,10,2,2,"F");
+    doc.setTextColor(255,255,255);doc.setFontSize(11);doc.setFont("helvetica","bold");
+    doc.text(kit.nome,M+5,y+7);
+    doc.text(`${ki+1}/${KITS.length}`,W-M-3,y+7,{align:"right"});
+    y+=14;
+
+    doc.setFontSize(8);doc.setFont("helvetica","normal");doc.setTextColor(...GREY);
+    doc.text(`Responsável: ${responsavel}`,M,y);doc.text(`Operador: ${kd.operadorNome||"—"}`,M+CW/2,y);y+=5;
+    doc.text(`Produto: ${kd.produto||"—"}`,M,y);doc.text(`Concentração: ${kd.concentracao||"—"}`,M+CW/2,y);y+=5;
+    doc.text(`Nível tanque: ${kd.nivelTanque?kd.nivelTanque+"%":"—"}`,M,y);
+    doc.text(`Odor perceptível: ${kd.odorPerceptivel===true?"Sim":kd.odorPerceptivel===false?"Não":"—"}`,M+CW/2,y);y+=5;
+    doc.text(`Total inspeções: ${(kd.totalInspecoes||0)+1}`,M+CW/2,y);y+=5;
+    if(kd.pendenciasAnteriores){const ls=doc.splitTextToSize(`Pendências anteriores: ${kd.pendenciasAnteriores}`,CW);doc.text(ls,M,y);y+=ls.length*4;}
+    if(kd.historico){const ls=doc.splitTextToSize(`Histórico: ${kd.historico}`,CW);doc.text(ls,M,y);y+=ls.length*4;}
+    y+=2;
+
+    const okCount=ALL_ITEMS.filter(it=>kd[it.id].status===STATUS.OK).length;
+    const nokCount=ALL_ITEMS.filter(it=>kd[it.id].status===STATUS.NOK).length;
+    doc.setFillColor(...(nokCount>0?RED:GREEN));
+    doc.roundedRect(M,y,CW,9,2,2,"F");
+    doc.setTextColor(255,255,255);doc.setFontSize(8.5);doc.setFont("helvetica","bold");
+    doc.text(nokCount>0?`${nokCount} não conformidade(s)  —  ${okCount}/${ALL_ITEMS.length} OK`:`Sistema conforme  —  ${okCount}/${ALL_ITEMS.length} OK`,W/2,y+6,{align:"center"});
+    y+=13;
+
+    const renderSection=(title,items)=>{
+      doc.setFillColor(230,242,255);doc.roundedRect(M,y,CW,7,1,1,"F");
+      doc.setTextColor(...BLUE);doc.setFontSize(8.5);doc.setFont("helvetica","bold");
+      doc.text(title,M+3,y+5);y+=10;
+      items.forEach(item=>{
+        const d=kd[item.id];
+        const isOK=d.status===STATUS.OK,isNOK=d.status===STATUS.NOK;
+        // Previous inspection comparison
+        const prevKitData=prevData?prevData[kit.id]:null;
+        const prevItem=prevKitData?prevKitData[item.id]:null;
+        const wasNOK=prevItem&&prevItem.status===STATUS.NOK;
+        const nowOK=isOK&&wasNOK; // was NOK, now OK = resolved!
+        const stillNOK=isNOK&&wasNOK; // still NOK = recurring
+        if(isOK)doc.setFillColor(...GREEN);else if(isNOK)doc.setFillColor(...RED);else doc.setFillColor(180,180,180);
+        doc.circle(M+3,y+2.5,2,"F");
+        doc.setTextColor(30,30,30);doc.setFont("helvetica","normal");doc.setFontSize(8.5);
+        const lbl=item.hasValue&&d.value?`${item.label} — ${d.value} ${item.unit}`:item.label;
+        doc.text(lbl,M+8,y+3.5);
+        doc.setFont("helvetica","bold");doc.setTextColor(...(isOK?GREEN:isNOK?RED:GREY));
+        doc.text(isOK?"OK":isNOK?"NÃO OK":"PENDENTE",W-M-2,y+3.5,{align:"right"});
+        y+=7;
+        // Comparison badge
+        if(nowOK){
+          doc.setFontSize(7);doc.setFont("helvetica","bold");doc.setTextColor(0,150,80);
+          doc.text("✓ Resolvido desde a última inspeção",M+8,y);y+=4;
+        }
+        if(stillNOK){
+          doc.setFontSize(7);doc.setFont("helvetica","bold");doc.setTextColor(...AMBER);
+          doc.text("⚠ Recorrente — já estava NOK na inspeção anterior",M+8,y);y+=4;
+        }
+        if(isNOK){
+          if(d.criticidade){
+            const cor=d.criticidade==="Alta"?RED:d.criticidade==="Média"?AMBER:GREY;
+            doc.setFontSize(7.5);doc.setFont("helvetica","bold");doc.setTextColor(...cor);
+            doc.text(`Criticidade: ${d.criticidade}`,M+8,y);y+=4;
+          }
+          if(d.note){doc.setFont("helvetica","italic");doc.setFontSize(7.5);doc.setTextColor(...RED);const ls=doc.splitTextToSize(`Ocorrência: ${d.note}`,CW-12);doc.text(ls,M+8,y);y+=ls.length*3.5+1;}
+          if(d.acao){doc.setFont("helvetica","italic");doc.setFontSize(7.5);doc.setTextColor(0,130,70);const ls=doc.splitTextToSize(`Ação: ${d.acao}`,CW-12);doc.text(ls,M+8,y);y+=ls.length*3.5+1;}
+        }
+      });
+    };
+
+    renderSection("ESTRUTURA FÍSICA DO KIT",CHECKLIST_FISICO);
+    if(kd.kitFoto){try{doc.setFontSize(7.5);doc.setFont("helvetica","bold");doc.setTextColor(...GREY);doc.text("Foto geral do kit:",M,y+3);y+=5;doc.addImage(kd.kitFoto,"JPEG",M,y,55,37);y+=41;}catch(e){}}
+    y+=3;
+    renderSection("TESTE FUNCIONAL — ABERTURA DA VÁLVULA DE GNCD",CHECKLIST_FUNCIONAL);
+    if(kd.manometroFoto){try{doc.setFontSize(7.5);doc.setFont("helvetica","bold");doc.setTextColor(...GREY);doc.text("Foto do manômetro:",M,y+3);y+=5;doc.addImage(kd.manometroFoto,"JPEG",M,y,55,37);y+=41;}catch(e){}}
+    y+=3;
+
+    if(kd.observacoesGerais){
+      doc.setFillColor(250,250,250);doc.roundedRect(M,y,CW,7,1,1,"F");
+      doc.setTextColor(...GREY);doc.setFontSize(8);doc.setFont("helvetica","bold");
+      doc.text("OBSERVAÇÕES GERAIS",M+3,y+5);y+=9;
+      doc.setFont("helvetica","normal");doc.setTextColor(50,50,50);
+      const ls=doc.splitTextToSize(kd.observacoesGerais,CW);doc.text(ls,M,y);y+=ls.length*4+3;
+    }
+
+    // Assinatura operador
+    doc.setDrawColor(...GREY);doc.setLineWidth(0.3);
+    doc.line(M,y+15,M+80,y+15);
+    doc.line(M+CW-80,y+15,W-M,y+15);
+    doc.setFontSize(7.5);doc.setFont("helvetica","normal");doc.setTextColor(...GREY);
+    doc.text(`Operador: ${kd.operadorNome||"___________________________"}`,M,y+19);
+    doc.text(`Inspetor: ${responsavel}`,M+CW-80,y+19);
+    if(kd.operadorValidou){
+      doc.setTextColor(...GREEN);doc.setFont("helvetica","bold");
+      doc.text("✓ Validado pelo operador",M,y+24);
+    }
+
+    doc.setFillColor(...BLUE);doc.rect(0,287,W,10,"F");
+    doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont("helvetica","normal");
+    doc.text("Ecolab • Tecnologia Odortech — Relatório técnico de campo",W/2,293,{align:"center"});
+    doc.text(`Página ${ki+2} de ${KITS.length+1}`,W-M,293,{align:"right"});
+    if(qrDataURL){try{doc.addImage(qrDataURL,"PNG",M,277,12,12);}catch(e){}}
+  }
+
+  const pdfBlob=doc.output("blob");
+  const fileName=`inspecao_odortech_${todayStr().replace(/\//g,"-")}.pdf`;
+
+  // Share via WhatsApp if possible
+  const file=new File([pdfBlob],fileName,{type:"application/pdf"});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){
+    try{
+      await navigator.share({files:[file],title:"Relatório Odortech",text:`Inspeção Odortech — ${todayStr()}`});
+      return;
+    }catch(e){}
+  }
+  // Fallback: download
+  const url=URL.createObjectURL(pdfBlob);
+  const a=document.createElement("a");a.href=url;a.download=fileName;a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ---- APP ----
+function App(){
+  const [step,setStep]=useState("config");
+  const [currentKit,setCurrentKit]=useState(null);
+  const [currentSection,setCurrentSection]=useState("fisico");
+  const [responsavel,setResponsavel]=useState("Carlos Henrique");
+  const [grupoWhatsApp,setGrupoWhatsApp]=useState("");
+  const [proximaVisita,setProximaVisita]=useState(""); // auto-calculated
+  const [allData,setAllData]=useState(()=>{const saved=loadLocal();return saved?saved.allData:freshAll();});
+  const [fotoCapa,setFotoCapa]=useState(()=>{const saved=loadLocal();return saved?saved.fotoCapa:null;});
+  const [generating,setGenerating]=useState(false);
+  const [darkMode,setDarkMode]=useState(false);
+  const [timerSec,setTimerSec]=useState(()=>{const saved=loadLocal();return saved?saved.timerSec:0;});
+  const [timerRunning,setTimerRunning]=useState(false);
+  const timerRef=useRef(null);
+  const prevInspecao=loadPrev();
+
+  // Auto-save whenever data changes
+  useEffect(()=>{
+    saveLocal({allData,fotoCapa,timerSec,responsavel,grupoWhatsApp});
+  },[allData,fotoCapa,timerSec,responsavel,grupoWhatsApp]);
+
+  useEffect(()=>{
+    if(timerRunning){timerRef.current=setInterval(()=>setTimerSec(s=>s+1),1000);}
+    else{clearInterval(timerRef.current);}
+    return()=>clearInterval(timerRef.current);
+  },[timerRunning]);
+
+  function startRota(){setTimerRunning(true);setStep("rota");}
+  function resetAll(){
+    if(!confirm("Limpar toda a rota e começar do zero?"))return;
+    savePrev(allData); // save current as previous before clearing
+    clearLocal();
+    setAllData(freshAll());
+    setFotoCapa(null);
+    setTimerSec(0);
+    setTimerRunning(false);
+    setStep("config");
+  }
+
+  function updateItem(kitId,itemId,patch){
+    setAllData(prev=>({...prev,[kitId]:{...prev[kitId],[itemId]:{...prev[kitId][itemId],...patch}}}));
+  }
+  function updateKit(kitId,patch){
+    setAllData(prev=>({...prev,[kitId]:{...prev[kitId],...patch}}));
+  }
+  function kitStatus(kitId){
+    const kd=allData[kitId];
+    const answered=ALL_ITEMS.filter(it=>kd[it.id].status!==STATUS.NONE).length;
+    const nok=ALL_ITEMS.filter(it=>kd[it.id].status===STATUS.NOK).length;
+    if(answered===0)return "pendente";
+    if(answered<ALL_ITEMS.length)return "parcial";
+    if(nok>0)return "nok";
+    return "ok";
+  }
+
+  const dm=darkMode;
+  const bg=dm?"bg-slate-900":"bg-slate-100";
+  const card=dm?"bg-slate-800 border-slate-700":"bg-white border-slate-200";
+  const txt=dm?"text-slate-100":"text-slate-800";
+  const sub=dm?"text-slate-400":"text-slate-500";
+  const inp=dm?"bg-slate-700 border-slate-600 text-slate-100":"bg-white border-slate-200 text-slate-800";
+
+  // ---- CONFIG SCREEN ----
+  if(step==="config"){
+    return <div className={`min-h-screen ${bg} flex flex-col`}>
+      <div className="text-white px-5 pt-8 pb-6" style={{backgroundColor:BLUE_HEX}}>
+        <div className="flex items-center justify-between">
+          <img src={LOGO_SRC} alt="Ecolab" className="h-8 rounded"/>
+          <button onClick={()=>setDarkMode(!dm)} className="text-blue-200 text-xs flex items-center gap-1 bg-blue-700/40 px-3 py-1.5 rounded-lg">
+            {dm?"☀️ Claro":"🌙 Escuro"}
+          </button>
+        </div>
+        <h1 className="text-xl font-bold mt-3">Configuração da Rota</h1>
+        <p className="text-blue-100 text-sm">Odortech • Klabin — Unidade Monte Alegre</p>
+      </div>
+
+      <div className="flex-1 px-4 py-5 space-y-4">
+        <div className={`rounded-xl border p-4 space-y-3 ${card}`}>
+          <p className={`text-xs font-bold uppercase tracking-wide ${sub}`}>Dados da Inspeção</p>
+          {[
+            {label:"Responsável pela inspeção",val:responsavel,set:setResponsavel,ph:"Nome do inspetor"},
+            {label:"Grupo de WhatsApp destino",val:grupoWhatsApp,set:setGrupoWhatsApp,ph:"Ex: Equipe Klabin Monte Alegre"},
+
+          ].map(f=><div key={f.label}>
+            <label className={`text-xs font-semibold mb-1 block ${sub}`}>{f.label}</label>
+            <input value={f.val} onChange={e=>f.set(e.target.value)} placeholder={f.ph}
+              className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none ${inp}`}/>
+          </div>)}
+        </div>
+
+        <div className={`rounded-xl border p-4 ${card}`}>
+          <p className={`text-xs font-bold uppercase tracking-wide mb-3 ${sub}`}>Kits desta rota</p>
+          <div className="space-y-2">
+            {KITS.map((k,i)=><div key={k.id} className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0"
+                style={{backgroundColor:BLUE_HEX}}>{i+1}</div>
+              <p className={`text-sm ${txt}`}>{k.nome}</p>
+            </div>)}
+          </div>
+        </div>
+      </div>
+
+        <div className={`rounded-xl border p-4 ${card}`}>
+          <p className={`text-xs font-bold uppercase tracking-wide mb-2 ${sub}`}>Frequência de Inspeção</p>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">📅</span>
+            <div>
+              <p className={`text-sm font-semibold ${txt}`}>A cada 7 dias — segunda a sexta</p>
+              <p className={`text-xs mt-0.5 ${sub}`}>Próxima inspeção prevista: {proximaInspecao()}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className={`rounded-xl border p-4 ${card}`}>
+          <p className={`text-xs font-bold uppercase tracking-wide mb-2 ${sub}`}>Foto de Capa do Relatório</p>
+          <p className={`text-xs mb-3 ${sub}`}>Opcional — aparece na capa do PDF</p>
+          {(()=>{
+            const ref=React.createRef();
+            return <div>
+              <input ref={ref} type="file" accept="image/*" capture="environment" className="hidden"
+                onChange={e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>setFotoCapa(ev.target.result);r.readAsDataURL(f);}}/>
+              {fotoCapa
+                ?<div className="relative">
+                  <img src={fotoCapa} alt="Capa" className="w-full h-32 rounded-xl object-cover border border-slate-200"/>
+                  <button onClick={()=>setFotoCapa(null)} className="absolute top-2 right-2 w-7 h-7 bg-slate-800/80 text-white rounded-full text-xs flex items-center justify-center">✕</button>
+                </div>
+                :<button onClick={()=>ref.current&&ref.current.click()}
+                  className={`w-full py-8 rounded-xl border-2 border-dashed flex flex-col items-center gap-2 ${dm?"border-slate-600 text-slate-400":"border-slate-300 text-slate-400"}`}>
+                  <span className="text-3xl">📷</span>
+                  <span className="text-sm">Tirar foto da área geral</span>
+                </button>}
+            </div>;
+          })()}
+        </div>
+
+      <div className="px-4 pb-8 space-y-2">
+        <button onClick={startRota}
+          className="w-full text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+          style={{backgroundColor:BLUE_HEX}}>
+          ▶ Iniciar Rota de Inspeção
+        </button>
+        <button onClick={resetAll} className={`w-full text-xs py-2 ${sub}`}>
+          🗑 Limpar rota salva e começar do zero
+        </button>
+      </div>
+    </div>;
+  }
+
+  // ---- ROTA SCREEN ----
+  if(step==="rota"){
+    const totalNOK=KITS.reduce((a,k)=>a+ALL_ITEMS.filter(it=>allData[k.id][it.id].status===STATUS.NOK).length,0);
+    const totalOK=KITS.reduce((a,k)=>a+ALL_ITEMS.filter(it=>allData[k.id][it.id].status===STATUS.OK).length,0);
+    const totalPend=KITS.reduce((a,k)=>a+ALL_ITEMS.filter(it=>allData[k.id][it.id].status===STATUS.NONE).length,0);
+
+    return <div className={`min-h-screen ${bg} flex flex-col`}>
+      <div className="text-white px-5 pt-6 pb-5" style={{backgroundColor:BLUE_HEX}}>
+        <div className="flex items-center justify-between mb-2">
+          <button onClick={()=>{setTimerRunning(false);setStep("config");}} className="text-blue-200 text-sm flex items-center gap-1">
+            ← Config
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="text-blue-100 text-sm font-mono bg-blue-700/40 px-2 py-1 rounded-lg">⏱ {fmtTimer(timerSec)}</span>
+            <button onClick={()=>setDarkMode(!dm)} className="text-blue-200 text-xs bg-blue-700/40 px-2 py-1 rounded-lg">{dm?"☀️":"🌙"}</button>
+          </div>
+        </div>
+        <img src={LOGO_SRC} alt="Ecolab" className="h-7 mb-2 rounded"/>
+        <h1 className="text-lg font-bold">Rota de Inspeção</h1>
+        <p className="text-blue-100 text-xs">Klabin — Unidade Monte Alegre • {todayStr()}</p>
+        <div className="mt-3 grid grid-cols-4 gap-2">
+          {[
+            {label:"OK",val:totalOK,color:"bg-green-500"},
+            {label:"NOK",val:totalNOK,color:"bg-rose-500"},
+            {label:"Pend.",val:totalPend,color:"bg-amber-400"},
+            {label:"Tempo",val:fmtTimer(timerSec),color:"bg-blue-400"},
+          ].map(b=><div key={b.label} className="bg-white/15 rounded-xl p-2 text-center">
+            <p className="text-base font-bold text-white">{b.val}</p>
+            <p className="text-blue-100 text-[10px]">{b.label}</p>
+          </div>)}
+        </div>
+      </div>
+
+      <div className="flex-1 px-4 py-4 space-y-3">
+        {KITS.map((kit,idx)=>{
+          const st=kitStatus(kit.id);
+          const kd=allData[kit.id];
+          const ok=ALL_ITEMS.filter(it=>kd[it.id].status===STATUS.OK).length;
+          const nok=ALL_ITEMS.filter(it=>kd[it.id].status===STATUS.NOK).length;
+          const dotColor=st==="pendente"?"bg-slate-300":st==="parcial"?"bg-amber-400":st==="nok"?"bg-rose-500":"bg-green-500";
+          return <div key={kit.id}
+            onClick={()=>{setCurrentKit(kit.id);setCurrentSection("fisico");setStep("kit");}}
+            className={`rounded-2xl border p-4 flex items-center gap-3 active:scale-[0.98] transition-all cursor-pointer shadow-sm ${card}`}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0"
+              style={{backgroundColor:BLUE_HEX}}>{idx+1}</div>
+            <div className="flex-1 min-w-0">
+              <p className={`font-semibold text-sm ${txt}`}>{kit.nome}</p>
+              <p className={`text-xs mt-0.5 ${sub}`}>
+                {st==="pendente"?"Não iniciado":st==="parcial"?`Em andamento — ${ok+nok}/${ALL_ITEMS.length}`:`${ok} OK • ${nok} NOK`}
+              </p>
+            </div>
+            <div className={`w-3 h-3 rounded-full shrink-0 ${dotColor}`}/>
+          </div>;
+        })}
+      </div>
+
+      <div className="px-4 pb-8 space-y-2">
+        <button onClick={()=>{setTimerRunning(false);setStep("conclusao");}}
+          className="w-full text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+          style={{backgroundColor:BLUE_HEX}}>
+          ✓ Concluir Rota
+        </button>
+        <p className={`text-center text-xs ${sub}`}>Veja o resumo antes de gerar o PDF</p>
+      </div>
+    </div>;
+  }
+
+  // ---- KIT SCREEN ----
+  if(step==="kit"&&currentKit){
+    const kit=KITS.find(k=>k.id===currentKit);
+    const kd=allData[currentKit];
+    const kitIdx=KITS.findIndex(k=>k.id===currentKit);
+    const prevKit=kitIdx>0?KITS[kitIdx-1]:null;
+    const nextKit=kitIdx<KITS.length-1?KITS[kitIdx+1]:null;
+    const items=currentSection==="fisico"?CHECKLIST_FISICO:CHECKLIST_FUNCIONAL;
+
+    return <div className={`min-h-screen ${bg} flex flex-col`}>
+      <div className="text-white px-5 pt-6 pb-4 sticky top-0 z-10" style={{backgroundColor:BLUE_HEX}}>
+        <div className="flex items-center justify-between mb-2">
+          <button onClick={()=>setStep("rota")} className="text-blue-200 text-sm flex items-center gap-1">← Rota</button>
+          <div className="flex items-center gap-2">
+            <span className="text-blue-100 text-xs font-mono bg-blue-700/40 px-2 py-1 rounded">⏱ {fmtTimer(timerSec)}</span>
+            <span className={`text-xs ${sub}`}>Kit {kitIdx+1}/{KITS.length}</span>
+          </div>
+        </div>
+        <h2 className="font-bold text-base">{kit.nome}</h2>
+        <div className="flex gap-2 mt-2">
+          {["fisico","funcional"].map(s=>(
+            <button key={s} onClick={()=>setCurrentSection(s)}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${currentSection===s?"bg-white":"bg-blue-700/40 text-blue-100"}`}
+              style={currentSection===s?{color:BLUE_HEX}:{}}>
+              {s==="fisico"?"Estrutura Física":"Teste Funcional"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex-1 px-4 py-4 space-y-3">
+
+        {currentSection==="fisico"&&<div className={`rounded-xl border p-4 space-y-3 ${card}`}>
+          <p className={`text-xs font-bold uppercase tracking-wide ${sub}`}>Dados do Kit</p>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              {label:"Produto aplicado",key:"produto",ph:"Nome do produto"},
+              {label:"Concentração",key:"concentracao",ph:"Ex: 10%"},
+              {label:"Nível do tanque (%)",key:"nivelTanque",ph:"Ex: 75"},
+            ].map(f=><div key={f.key}>
+              <label className={`text-xs mb-1 block ${sub}`}>{f.label}</label>
+              <input value={kd[f.key]||""} onChange={e=>updateKit(currentKit,{[f.key]:e.target.value})}
+                placeholder={f.ph} className={`w-full border rounded-lg px-2 py-2 text-xs focus:outline-none ${inp}`}/>
+            </div>)}
+          </div>
+
+          <div>
+            <label className={`text-xs mb-1 block ${sub}`}>Odor perceptível no ponto?</label>
+            <div className="flex gap-2">
+              {[{label:"Sim",val:true},{label:"Não",val:false}].map(op=>(
+                <button key={String(op.val)} onClick={()=>updateKit(currentKit,{odorPerceptivel:kd.odorPerceptivel===op.val?null:op.val})}
+                  className={`flex-1 py-2 rounded-lg text-sm font-semibold border-2 transition-all ${kd.odorPerceptivel===op.val?"text-white":"border-slate-200 text-slate-500 bg-white"}`}
+                  style={kd.odorPerceptivel===op.val?{backgroundColor:BLUE_HEX,borderColor:BLUE_HEX}:{}}>
+                  {op.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className={`text-xs mb-1 block ${sub}`}>Pendências da inspeção anterior</label>
+            <textarea value={kd.pendenciasAnteriores} onChange={e=>updateKit(currentKit,{pendenciasAnteriores:e.target.value})}
+              placeholder="Ex: mangueira ressecada — resolvida / bomba com ruído — ainda aberta"
+              className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none resize-none ${inp}`} rows={2}/>
+          </div>
+          <div>
+            <label className={`text-xs mb-1 block ${sub}`}>Histórico de ocorrências</label>
+            <textarea value={kd.historico} onChange={e=>updateKit(currentKit,{historico:e.target.value})}
+              placeholder="Observações de inspeções anteriores..."
+              className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none resize-none ${inp}`} rows={2}/>
+          </div>
+        </div>}
+
+        {currentSection==="funcional"&&<div className={`rounded-xl border p-4 ${card}`}>
+          <p className={`text-xs font-bold uppercase tracking-wide mb-3 ${sub}`}>Operador do Teste Remoto</p>
+          <div className="space-y-2">
+            <div>
+              <label className={`text-xs mb-1 block ${sub}`}>Nome do operador Klabin</label>
+              <input value={kd.operadorNome} onChange={e=>updateKit(currentKit,{operadorNome:e.target.value})}
+                placeholder="Nome do operador que acionou remotamente"
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none ${inp}`}/>
+            </div>
+            <div>
+              <label className={`text-xs mb-1 block ${sub}`}>PRN do operador</label>
+              <input value={kd.operadorPRN||""} onChange={e=>updateKit(currentKit,{operadorPRN:e.target.value})}
+                placeholder="Ex: PRN-12345"
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none ${inp}`}/>
+            </div>
+            {(kd.operadorNome||kd.operadorPRN)&&<div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 flex items-center gap-2">
+              <span style={{color:"#0077C8"}}>👷</span>
+              <p className="text-xs text-blue-700 font-medium">{kd.operadorNome||"—"} {kd.operadorPRN?`• ${kd.operadorPRN}`:""}</p>
+            </div>}
+          </div>
+        </div>}
+
+        {currentSection==="funcional"&&<div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700 flex gap-2">
+          <span className="shrink-0 mt-0.5">⚠️</span>
+          <span>Confirme estes itens somente durante a abertura real da válvula de GNCD para atmosfera.</span>
+        </div>}
+
+        {items.map(item=>{
+          const d=kd[item.id];
+          return <div key={item.id} className={`rounded-xl border p-4 ${card}`}>
+            <div className="flex items-start justify-between gap-3">
+              <p className={`text-sm font-medium leading-snug pt-1 ${txt}`}>{item.label}</p>
+              <div className="flex gap-2 shrink-0">
+                <button onClick={()=>updateItem(currentKit,item.id,{status:d.status===STATUS.OK?STATUS.NONE:STATUS.OK,photo:d.status===STATUS.OK?"":d.photo})}
+                  className={`w-11 h-11 rounded-xl border-2 flex items-center justify-center transition-all active:scale-95 ${d.status===STATUS.OK?"text-white":"bg-white border-slate-200 text-slate-300"}`}
+                  style={d.status===STATUS.OK?{backgroundColor:BLUE_HEX,borderColor:BLUE_HEX}:{}}>✓</button>
+                <button onClick={()=>updateItem(currentKit,item.id,{status:d.status===STATUS.NOK?STATUS.NONE:STATUS.NOK})}
+                  className={`w-11 h-11 rounded-xl border-2 flex items-center justify-center transition-all active:scale-95 ${d.status===STATUS.NOK?"bg-rose-500 border-rose-500 text-white":"bg-white border-slate-200 text-slate-300"}`}>✕</button>
+              </div>
+            </div>
+            {item.hasValue&&<div className="mt-3 flex items-center gap-2">
+              <input type="text" inputMode="decimal" placeholder="Valor medido" value={d.value}
+                onChange={e=>updateItem(currentKit,item.id,{value:e.target.value})}
+                className={`w-28 border rounded-lg px-3 py-2 text-sm focus:outline-none ${inp}`}/>
+              <span className={`text-xs ${sub}`}>{item.unit}</span>
+            </div>}
+            {d.status===STATUS.NOK&&<div className="mt-3 space-y-2 border-t border-slate-100 pt-3">
+              <div>
+                <label className={`text-xs mb-1 block ${sub}`}>Criticidade</label>
+                <div className="flex gap-2">
+                  {["Baixa","Média","Alta"].map(c=>(
+                    <button key={c} onClick={()=>updateItem(currentKit,item.id,{criticidade:d.criticidade===c?"":c})}
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-bold border-2 transition-all ${d.criticidade===c?"text-white border-transparent":
+                        c==="Alta"?"border-rose-200 text-rose-400":c==="Média"?"border-amber-200 text-amber-500":"border-slate-200 text-slate-400"}`}
+                      style={d.criticidade===c?{backgroundColor:c==="Alta"?"#dc2626":c==="Média"?"#d97706":"#6b7280"}:{}}>
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <textarea placeholder="Descreva a não conformidade..." value={d.note}
+                onChange={e=>updateItem(currentKit,item.id,{note:e.target.value})}
+                className={`w-full border border-rose-200 rounded-lg px-3 py-2 text-sm focus:outline-none resize-none ${dm?"bg-slate-700 text-slate-100":""}`} rows={2}/>
+              <textarea placeholder="Ação corretiva tomada..." value={d.acao}
+                onChange={e=>updateItem(currentKit,item.id,{acao:e.target.value})}
+                className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none resize-none ${inp}`} rows={2}/>
+              <div>
+                <label className={`text-xs mb-1 block ${sub}`}>Foto obrigatória</label>
+                {(()=>{
+                  const ref=React.createRef();
+                  return <div>
+                    <input ref={ref} type="file" accept="image/*" capture="environment" className="hidden"
+                      onChange={e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>updateItem(currentKit,item.id,{photo:ev.target.result});r.readAsDataURL(f);}}/>
+                    {d.photo
+                      ?<div className="relative inline-block">
+                        <img src={d.photo} alt="" className="h-24 rounded-lg border object-cover"/>
+                        <button onClick={()=>updateItem(currentKit,item.id,{photo:""})} className="absolute -top-2 -right-2 w-6 h-6 bg-slate-700 text-white rounded-full text-xs flex items-center justify-center">✕</button>
+                      </div>
+                      :<button onClick={()=>ref.current&&ref.current.click()} className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg border border-rose-300 text-rose-600 bg-rose-50">
+                        📷 Tirar foto
+                      </button>}
+                  </div>;
+                })()}
+              </div>
+            </div>}
+          </div>;
+        })}
+
+        {currentSection==="fisico"&&<div className={`rounded-xl border p-4 ${card}`}>
+          <p className={`text-sm font-medium mb-1 ${txt}`}>Foto geral do kit</p>
+          <p className={`text-xs mb-2 ${sub}`}>Registro visual do conjunto instalado em campo</p>
+          {(()=>{const ref=React.createRef();return <div>
+            <input ref={ref} type="file" accept="image/*" capture="environment" className="hidden"
+              onChange={e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>updateKit(currentKit,{kitFoto:ev.target.result});r.readAsDataURL(f);}}/>
+            {kd.kitFoto?<div className="relative inline-block"><img src={kd.kitFoto} alt="" className="h-24 rounded-lg border object-cover"/>
+              <button onClick={()=>updateKit(currentKit,{kitFoto:null})} className="absolute -top-2 -right-2 w-6 h-6 bg-slate-700 text-white rounded-full text-xs flex items-center justify-center">✕</button></div>
+              :<button onClick={()=>ref.current&&ref.current.click()} className={`flex items-center gap-2 text-sm px-3 py-2 rounded-lg border ${inp}`}>📷 Tirar foto do kit</button>}
+          </div>;})()}
+        </div>}
+
+        {currentSection==="funcional"&&<div className={`rounded-xl border p-4 ${card}`}>
+          <p className={`text-sm font-medium mb-1 ${txt}`}>Foto do manômetro pressurizado</p>
+          <p className={`text-xs mb-2 ${sub}`}>Capture a leitura no momento da abertura da válvula</p>
+          {(()=>{const ref=React.createRef();return <div>
+            <input ref={ref} type="file" accept="image/*" capture="environment" className="hidden"
+              onChange={e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>updateKit(currentKit,{manometroFoto:ev.target.result});r.readAsDataURL(f);}}/>
+            {kd.manometroFoto?<div className="relative inline-block"><img src={kd.manometroFoto} alt="" className="h-24 rounded-lg border object-cover"/>
+              <button onClick={()=>updateKit(currentKit,{manometroFoto:null})} className="absolute -top-2 -right-2 w-6 h-6 bg-slate-700 text-white rounded-full text-xs flex items-center justify-center">✕</button></div>
+              :<button onClick={()=>ref.current&&ref.current.click()} className={`flex items-center gap-2 text-sm px-3 py-2 rounded-lg border ${inp}`}>📷 Tirar foto do manômetro</button>}
+          </div>;})()}
+        </div>}
+
+        {currentSection==="funcional"&&<div className={`rounded-xl border p-4 ${card}`}>
+          <p className={`text-sm font-medium mb-3 ${txt}`}>Observações gerais do kit</p>
+          <textarea value={kd.observacoesGerais||""} onChange={e=>updateKit(currentKit,{observacoesGerais:e.target.value})}
+            placeholder="Qualquer observação adicional sobre este kit..."
+            className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none resize-none ${inp}`} rows={3}/>
+          <div className="mt-3 border-t border-slate-100 pt-3">
+            <p className={`text-xs font-semibold mb-2 ${sub}`}>Validação do operador</p>
+            <button onClick={()=>updateKit(currentKit,{operadorValidou:!kd.operadorValidou})}
+              className={`w-full py-3 rounded-xl font-semibold text-sm border-2 transition-all ${kd.operadorValidou?"text-white border-transparent bg-green-600":"border-slate-200 text-slate-500"}`}>
+              {kd.operadorValidou?"✓ Inspeção validada pelo operador":"Operador confirmar inspeção"}
+            </button>
+          </div>
+        </div>}
+      </div>
+
+      <div className={`px-4 py-4 border-t space-y-2 sticky bottom-0 ${dm?"bg-slate-800 border-slate-700":"bg-white border-slate-200"}`}>
+        <div className="flex gap-2">
+          {prevKit&&currentSection==="fisico"&&(
+            <button onClick={()=>setCurrentKit(prevKit.id)}
+              className={`px-4 py-3 rounded-xl border text-sm font-medium ${dm?"border-slate-600 text-slate-300":"border-slate-200 text-slate-600"}`}>
+              ← Ant.
+            </button>
+          )}
+          <button onClick={()=>{
+            if(currentSection==="fisico"){setCurrentSection("funcional");}
+            else if(nextKit){setCurrentKit(nextKit.id);setCurrentSection("fisico");}
+            else{setStep("rota");}}}
+            className="flex-1 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+            style={{backgroundColor:BLUE_HEX}}>
+            {currentSection==="fisico"?"Teste Funcional →":nextKit?"Próximo Kit →":"✓ Finalizar Rota"}
+          </button>
+        </div>
+        {currentSection==="funcional"&&(
+          <button onClick={()=>setCurrentSection("fisico")} className={`w-full text-sm py-1.5 flex items-center justify-center gap-1 ${sub}`}>
+            ← Voltar para Estrutura Física
+          </button>
+        )}
+      </div>
+    </div>;
+  }
+  // ---- CONCLUSÃO SCREEN ----
+  if(step==="conclusao"){
+    const totalOK=KITS.reduce((a,k)=>a+ALL_ITEMS.filter(it=>allData[k.id][it.id].status===STATUS.OK).length,0);
+    const totalNOK=KITS.reduce((a,k)=>a+ALL_ITEMS.filter(it=>allData[k.id][it.id].status===STATUS.NOK).length,0);
+    const totalPend=KITS.reduce((a,k)=>a+ALL_ITEMS.filter(it=>allData[k.id][it.id].status===STATUS.NONE).length,0);
+    const kitsDone=KITS.filter(k=>ALL_ITEMS.every(it=>allData[k.id][it.id].status!==STATUS.NONE)).length;
+    const prev=loadPrev();
+    // Count resolved items vs previous
+    let resolved=0,recurring=0;
+    if(prev&&prev.data){
+      KITS.forEach(k=>{ALL_ITEMS.forEach(it=>{
+        const wasNOK=prev.data[k.id]&&prev.data[k.id][it.id]&&prev.data[k.id][it.id].status===STATUS.NOK;
+        if(wasNOK&&allData[k.id][it.id].status===STATUS.OK)resolved++;
+        if(wasNOK&&allData[k.id][it.id].status===STATUS.NOK)recurring++;
+      });});
+    }
+
+    return <div className={`min-h-screen ${bg} flex flex-col`}>
+      <div className="text-white px-5 pt-8 pb-8" style={{backgroundColor:BLUE_HEX}}>
+        <img src={LOGO_SRC} alt="Ecolab" className="h-7 mb-4 rounded"/>
+        <div className="text-center">
+          <div className="text-5xl mb-2">{totalNOK===0?"🎉":"✅"}</div>
+          <h1 className="text-2xl font-bold">{totalNOK===0?"Rota Concluída!":"Rota Concluída"}</h1>
+          <p className="text-blue-100 text-sm mt-1">{todayStr()} • Tempo: {fmtTimer(timerSec)}</p>
+        </div>
+      </div>
+
+      <div className="flex-1 px-4 py-5 space-y-4">
+        {/* Main score */}
+        <div className={`rounded-2xl border p-5 ${card}`}>
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="bg-green-50 rounded-xl p-3">
+              <p className="text-3xl font-bold text-green-600">{totalOK}</p>
+              <p className="text-xs text-green-600 font-semibold mt-1">Itens OK</p>
+            </div>
+            <div className={`${totalNOK>0?"bg-rose-50":"bg-green-50"} rounded-xl p-3`}>
+              <p className={`text-3xl font-bold ${totalNOK>0?"text-rose-600":"text-green-600"}`}>{totalNOK}</p>
+              <p className={`text-xs font-semibold mt-1 ${totalNOK>0?"text-rose-600":"text-green-600"}`}>Não OK</p>
+            </div>
+            <div className={`${totalPend>0?"bg-amber-50":"bg-green-50"} rounded-xl p-3`}>
+              <p className={`text-3xl font-bold ${totalPend>0?"text-amber-600":"text-green-600"}`}>{kitsDone}</p>
+              <p className={`text-xs font-semibold mt-1 ${totalPend>0?"text-amber-600":"text-green-600"}`}>Kits completos</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Kit by kit summary */}
+        <div className={`rounded-2xl border p-4 ${card}`}>
+          <p className={`text-xs font-bold uppercase tracking-wide mb-3 ${sub}`}>Resumo por Kit</p>
+          <div className="space-y-2">
+            {KITS.map(kit=>{
+              const ok=ALL_ITEMS.filter(it=>allData[kit.id][it.id].status===STATUS.OK).length;
+              const nok=ALL_ITEMS.filter(it=>allData[kit.id][it.id].status===STATUS.NOK).length;
+              const pend=ALL_ITEMS.filter(it=>allData[kit.id][it.id].status===STATUS.NONE).length;
+              return <div key={kit.id} className="flex items-center gap-3">
+                <div className={`w-2.5 h-2.5 rounded-full shrink-0 ${nok>0?"bg-rose-500":pend>0?"bg-amber-400":"bg-green-500"}`}/>
+                <p className={`text-sm flex-1 ${txt}`}>{kit.nome}</p>
+                <span className={`text-xs font-bold ${nok>0?"text-rose-500":pend>0?"text-amber-500":"text-green-600"}`}>
+                  {nok>0?`${nok} NOK`:pend>0?`${pend} pend.`:"OK"}
+                </span>
+              </div>;
+            })}
+          </div>
+        </div>
+
+        {/* Comparison with previous */}
+        {prev&&prev.data&&(resolved>0||recurring>0)&&<div className={`rounded-2xl border p-4 ${card}`}>
+          <p className={`text-xs font-bold uppercase tracking-wide mb-3 ${sub}`}>Comparativo com Inspeção Anterior</p>
+          <p className={`text-xs ${sub} mb-2`}>Anterior: {prev.date}</p>
+          {resolved>0&&<div className="flex items-center gap-2 mb-2">
+            <span className="text-green-500 font-bold text-lg">↑</span>
+            <p className="text-sm text-green-600 font-semibold">{resolved} item(s) resolvido(s) desde a última inspeção</p>
+          </div>}
+          {recurring>0&&<div className="flex items-center gap-2">
+            <span className="text-amber-500 font-bold text-lg">!</span>
+            <p className="text-sm text-amber-600 font-semibold">{recurring} não conformidade(s) recorrente(s)</p>
+          </div>}
+        </div>}
+
+        {/* Next inspection */}
+        <div className={`rounded-xl border p-4 flex items-center gap-3 ${card}`}>
+          <span className="text-2xl">📅</span>
+          <div>
+            <p className={`text-sm font-semibold ${txt}`}>Próxima inspeção</p>
+            <p className={`text-xs ${sub}`}>{proximaInspecao()} • Frequência semanal</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 pb-8 space-y-3">
+        <button onClick={async()=>{
+          setGenerating(true);
+          try{
+            savePrev(allData);
+            const prev=loadPrev();
+            await gerarPDF(responsavel,allData,grupoWhatsApp,proximaInspecao(),timerSec,darkMode,fotoCapa,prev?prev.data:null);
+          }catch(e){alert("Erro ao gerar PDF.");}
+          finally{setGenerating(false);}}}
+          disabled={generating}
+          className="w-full text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.98] transition-all"
+          style={{backgroundColor:BLUE_HEX}}>
+          📄 {generating?"Gerando PDF...":"Gerar e Compartilhar PDF"}
+        </button>
+        <button onClick={()=>setStep("rota")}
+          className={`w-full text-sm font-medium py-3 rounded-xl border ${dm?"border-slate-600 text-slate-300":"border-slate-200 text-slate-600"}`}>
+          ← Voltar e revisar
+        </button>
+      </div>
+    </div>;
+  }
+
+  return null;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
